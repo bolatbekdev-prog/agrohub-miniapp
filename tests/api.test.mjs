@@ -1,0 +1,11 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {validateLead} from '../api/validation.mjs';
+const valid={fullName:'Nargiza Karimova',phone:'+998 90 123 45 67',region:'Nukus',role:'Fermer',service:'Ombor va saqlash',message:'Saqlash kerak',website:''};
+test('valid application',()=>{const a=validateLead(valid);assert.equal(a.value.full_name,'Nargiza Karimova');assert.equal(a.value.phone,valid.phone)});
+test('missing fields',()=>assert.ok(validateLead({}).error));
+test('reject invalid phone',()=>assert.ok(validateLead({...valid,phone:'123'}).error));
+test('reject invalid role',()=>assert.ok(validateLead({...valid,role:'Boss'}).error));
+test('honeypot bot',()=>assert.equal(validateLead({...valid,website:'spam.example'}).spam,true));
+test('reject malformed',()=>assert.ok(validateLead('oops').error));
+test('limits message',()=>assert.equal(validateLead({...valid,message:'A'.repeat(1900)}).value.message.length,1000));
+test('limits name field',()=>assert.equal(validateLead({...valid,fullName:'B'.repeat(160)}).value.full_name.length,100));

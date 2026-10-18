@@ -1,0 +1,19 @@
+const OfflineHooks = (() => {
+ let current = null;
+ const same = (a,b) => Array.isArray(a)&&Array.isArray(b)&&a.length===b.length&&a.every((v,i)=>Object.is(v,b[i]));
+ function slot(){ if(!current) throw Error('Hook used outside render'); return [current,current._cursor++]; }
+ function useState(initial){ const [inst,i]=slot(); if(!inst._slots[i]) {const value=typeof initial==='function'?initial():initial;const item={value};item.setter=(v)=>{item.value=typeof v==='function'?v(item.value):v;inst.forceUpdate();};inst._slots[i]=item;} return [inst._slots[i].value,inst._slots[i].setter]; }
+ function useRef(initial){const [inst,i]=slot();if(!inst._slots[i]){const ref=node=>{ref.current=node};ref.current=initial;inst._slots[i]={value:ref};}return inst._slots[i].value;}
+ function useMemo(fn,deps){const [inst,i]=slot();const prev=inst._slots[i];if(!prev||!same(prev.deps,deps)){const value=fn();inst._slots[i]={value,deps};return value;}return prev.value;}
+ function useEffect(fn,deps){const [inst,i]=slot();const prev=inst._slots[i];if(!prev||!same(prev.deps,deps)){inst._pending.push(()=>{if(prev?.cleanup)prev.cleanup();const cleanup=fn();inst._slots[i]={deps,cleanup:typeof cleanup==='function'?cleanup:null};});}}
+ class ReactHooksPage extends React.Component{
+  constructor(p){super(p);this._slots=[];this._pending=[];this._cursor=0;}
+  render(){this._cursor=0;current=this;try{return App(this.props);}finally{current=null;}}
+  componentDidMount(){this.flush();}
+  componentDidUpdate(){this.flush();}
+  flush(){const effects=this._pending.splice(0);effects.forEach(fn=>fn());}
+  componentWillUnmount(){this._slots.forEach(x=>{if(x?.cleanup)x.cleanup();});}
+ }
+ return {useState,useEffect,useRef,useMemo,App:ReactHooksPage};
+})();
+const {useState,useEffect,useRef,useMemo}=OfflineHooks;

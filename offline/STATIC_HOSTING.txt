@@ -1,0 +1,9 @@
+AGROHUB Telegram Mini App — static frontend
+
+Ushbu papka tarkibini HTTPS statik hostingga (Netlify Drop, Cloudflare Pages va hokazo) yuklang.
+BotFather'da Mini App URL sifatida hosil bo'lgan HTTPS havolani ko'rsating.
+Dizayn, tillar, katalog, kalkulyator, scroll animatsiyalar Telegram ichida ishlaydi.
+
+DIQQAT: /api/leads ariza saqlash end-pointi statik hostingda yo'q.
+Ariza yuborishni ishga tushirish uchun to'liq Vercel/Supabase backendni deploy qiling.
+To'liq loyiha ZIPida TELEGRAM_SETUP_UZ.md bor.
