@@ -48,7 +48,7 @@ function App() {
   const [expandedFaq,setExpandedFaq] = useState<number|null>(0);
   const [form,setForm] = useState<FormData>(initialForm);
   const [sendState,setSendState] = useState<'idle'|'sending'|'success'|'error'|'offline'|'invalid'>('idle');
-  const storyRef=useRef<HTMLElement|null>(null);
+  const storyRef=useRef<HTMLDivElement|null>(null);
   const stepRef=useRef(0);
   const t=translations[lang];
 
